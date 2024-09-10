@@ -6,14 +6,14 @@ It reads a logic program, i.e. a set of logical rules, and computes the correspo
 ## Description
 
 The solver uses the translation of a logic program into MaxSAT's clauses in order to speed up
-the optimization. It uses Gringo as a grounder.
+the optimization. It is compatible with the intermediate file format of **lparse/smodels** and can be used with a modern grounder such as _gringo_.
 
 ## Getting Started
 
 ### Dependencies
 
 -   Tools: `make`, `curl` and `g++`.
--   _Gringo_ (a grounder from Potassco).
+-   _gringo_ (a grounder from Potassco) or other compatible.
 -   MaxSAT solvers: [Open-WBO and WMaxCDCL](https://maxsat-evaluations.github.io/2023/descriptions.html).
 
 ### Installing
