@@ -1,11 +1,12 @@
 # maxmodels
 
-A non-native solver for Answer Set Programming.
+A non-native solver for [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming).
+It reads a logic program, i.e. a set of logical rules, and computes the corresponding an answer set.
 
 ## Description
 
 The solver uses the translation of a logic program into MaxSAT's clauses in order to speed up
-the optimization compared with the state-of-the-art solvers like Clingo or DLV. It uses Gringo as a grounder.
+the optimization. It uses Gringo as a grounder.
 
 ## Getting Started
 
@@ -13,18 +14,18 @@ the optimization compared with the state-of-the-art solvers like Clingo or DLV. 
 
 -   Tools: `make`, `curl` and `g++`.
 -   _Gringo_ (a grounder from Potassco).
--   MaxSAT solver compatible with the standard WCNF format (a new format after 2022, see [this](https://maxsat-evaluations.github.io/2022/rules.html#input) for more details).
+-   MaxSAT solvers: [Open-WBO and WMaxCDCL](https://maxsat-evaluations.github.io/2023/descriptions.html).
 
 ### Installing
 
 -   Run `make install` to download all dependencies.
 -   Run `make build` to compile the solver.
--   Change a MaxSAT solver path in the configuration file `.env`.
+-   Create the `.env` file with MaxSAT solvers' paths, i.e. Open-WBO and WMaxCDCL.
 
 ### Executing program
 
 ```
-gringo --output=smodels --warn=none <input_model> | ./bin/maxmodels
+gringo --output=smodels --warn=none <input_model> | ./bin/maxmodels -e <path to .env file>
 ```
 
 ## Authors
