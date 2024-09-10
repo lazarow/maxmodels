@@ -61,20 +61,12 @@ namespace maxmodels
         {
             throw std::runtime_error("Open-WBO is not set or empty in the environment variables.");
         }
-        else if (std::filesystem::exists(openWBOPath) == false)
-        {
-            throw std::runtime_error("The path to Open-WBO is invalid.");
-        }
         configuration.openWBOPath = openWBOPath;
 
         const char *wMaxCDCLPath = getenv("WMAXCDCL");
         if (wMaxCDCLPath == nullptr || std::string(wMaxCDCLPath).empty())
         {
             throw std::runtime_error("WMaxCDCL is not set or empty in the environment variables.");
-        }
-        else if (std::filesystem::exists(wMaxCDCLPath) == false)
-        {
-            throw std::runtime_error("The path to WMaxCDCL is invalid.");
         }
         configuration.wMaxCDCLPath = wMaxCDCLPath;
 
