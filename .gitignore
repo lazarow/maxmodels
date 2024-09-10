@@ -1,0 +1,7 @@
+.vscode
+libs/*
+!libs/.gitkeep
+!libs/System2.h
+bin/*
+!bin/.gitkeep
+.env
