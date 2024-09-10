@@ -57,19 +57,6 @@ namespace maxmodels
     };
     typedef std::set<Rule> Rules;
 
-    struct CardinalityRule
-    {
-        Head head;
-        Body body;
-        unsigned int bound;
-    };
-
-    struct ChoiceRule
-    {
-        Heads heads;
-        Body body;
-    };
-
     typedef std::string Label;
     typedef std::map<Atom, Label> Mapping;
 
@@ -84,6 +71,8 @@ namespace maxmodels
         Rules rules;
         Mapping mapping;
         Weights weights;
+        Atoms founded;
+        Atoms unfounded;
         Atom largest = 0;
     };
 

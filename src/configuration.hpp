@@ -14,6 +14,7 @@ namespace maxmodels
         bool printRules = false;
         bool printSimplifiedRules = false;
         bool printLabels = false;
+        bool printWeights = false;
         bool printClauses = false;
         bool printSolverOutput = false;
         std::string openWBOPath;
@@ -32,7 +33,8 @@ namespace maxmodels
         p.add("-r", "--print-rules", "Print the rules.", ap::mode::BOOLEAN);
         p.add("-s", "--print-simplified-rules", "Print the simplified rules.", ap::mode::BOOLEAN);
         p.add("-l", "--print-labels", "Print the labels.", ap::mode::BOOLEAN);
-        p.add("-w", "--print-wcnf", "Print the program in the WCNF format.", ap::mode::BOOLEAN);
+        p.add("-w", "--print-weights", "Print the weights.", ap::mode::BOOLEAN);
+        p.add("-c", "--print-wcnf", "Print the program in the WCNF format.", ap::mode::BOOLEAN);
         p.add("-o", "--print-solver-output", "Print the solver's output.", ap::mode::BOOLEAN);
 
         auto args = p.parse();
@@ -45,7 +47,8 @@ namespace maxmodels
         configuration.printRules = (bool)stoi(args["-r"]);
         configuration.printSimplifiedRules = (bool)stoi(args["-s"]);
         configuration.printLabels = (bool)stoi(args["-l"]);
-        configuration.printClauses = (bool)stoi(args["-w"]);
+        configuration.printWeights = (bool)stoi(args["-w"]);
+        configuration.printClauses = (bool)stoi(args["-c"]);
         configuration.printSolverOutput = (bool)stoi(args["-o"]);
 
         std::string dotEnvFilePath = args["-e"];

@@ -170,22 +170,6 @@ namespace maxmodels
         return out.str();
     }
 
-    std::string as_string(const ChoiceRule &rule)
-    {
-        std::stringstream out;
-        out << as_string(rule.heads) << " -> ";
-        for (auto it = rule.body.begin(); it != rule.body.end(); ++it)
-        {
-            out << *it;
-            if (std::next(it) != rule.body.end())
-            {
-                out << ", ";
-            }
-        }
-        out << ".";
-        return out.str();
-    }
-
     char *as_char(const std::string &inputString)
     {
         char *charPtr = new char[inputString.length() + 1];

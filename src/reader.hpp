@@ -29,15 +29,11 @@ namespace maxmodels
         Atom atom;
         Literal literal;
         Label label;
-        std::queue<CardinalityRule> cardinalityRules;
-        std::queue<ChoiceRule> choiceRules;
 
         // Const.
         const unsigned int BASIC_RULE = 1;
-        const unsigned int CARDINALITY_RULE = 2;
-        const unsigned int CHOICE_RULE = 3;
         const unsigned int MINIMIZE_RULE = 6;
-        std::vector<int> validTypes = {BASIC_RULE, CARDINALITY_RULE, CHOICE_RULE, MINIMIZE_RULE};
+        std::vector<int> validTypes = {BASIC_RULE, MINIMIZE_RULE};
 
         // Section 1: Rules.
         while (std::getline(input, line))
@@ -56,11 +52,11 @@ namespace maxmodels
             type = definition.at(position++);
             if (std::find(validTypes.begin(), validTypes.end(), type) == validTypes.end())
             {
-                // std::cerr << line << std::endl;
+                std::cerr << line << std::endl;
                 throw std::runtime_error("The model consist an unsupported rule.");
             }
             Atoms heads;
-            nofHeads = type == CHOICE_RULE ? definition.at(position++) : 1;
+            nofHeads = definition.at(position++);
             for (i = 0; i < nofHeads; i++)
             {
                 head = definition.at(position++);
@@ -72,10 +68,6 @@ namespace maxmodels
             }
             nofLiterals = definition.at(position++);
             nofNegativeLiterals = definition.at(position++);
-            if (type == CARDINALITY_RULE)
-            {
-                bound = definition.at(position++);
-            }
             Body body;
             for (i = 0; i < nofLiterals; ++i)
             {
@@ -98,101 +90,6 @@ namespace maxmodels
                 rule.body = body;
                 program.rules.insert(rule);
             }
-            else if (type == CARDINALITY_RULE && bound == 0)
-            {
-                Rule rule;
-                rule.head = head;
-                program.rules.insert(rule);
-            }
-            else if (type == CARDINALITY_RULE && bound >= body.size())
-            {
-                Rule rule;
-                rule.head = head;
-                rule.body = body;
-                program.rules.insert(rule);
-            }
-            else if (type == CARDINALITY_RULE)
-            {
-                CardinalityRule rule;
-                rule.head = head;
-                rule.body = body;
-                rule.bound = bound;
-                cardinalityRules.push(rule);
-            }
-            else if (type == CHOICE_RULE)
-            {
-                ChoiceRule rule;
-                rule.heads = heads;
-                rule.body = body;
-                choiceRules.push(rule);
-            }
-        }
-
-        while (choiceRules.empty() == false)
-        {
-            ChoiceRule choiceRule = choiceRules.front();
-            choiceRules.pop();
-
-            Rule rule;
-            rule.head = ++program.largest;
-            rule.body = choiceRule.body;
-            program.rules.insert(rule);
-
-            for (Head head : choiceRule.heads)
-            {
-                Rule rule1;
-                rule1.head = ++program.largest;
-                rule1.body.insert(-head);
-                program.rules.insert(rule1);
-
-                Rule rule2;
-                rule2.head = head;
-                rule2.body.insert(rule.head);
-                rule2.body.insert(-rule1.head);
-                program.rules.insert(rule2);
-            }
-        }
-
-        while (cardinalityRules.empty() == false)
-        {
-            CardinalityRule cardinalityRule = cardinalityRules.front();
-            cardinalityRules.pop();
-
-            unsigned int columns = cardinalityRule.bound + 2;
-            unsigned int rows = cardinalityRule.body.size() + 1;
-            unsigned int literalIndex;
-            program.largest++; // Shift to the correct position as the first offset is 0.
-
-            Rule rule;
-            rule.head = cardinalityRule.head;
-            rule.body.insert(program.largest + cardinalityRule.bound); // ctr(0, l)
-            program.rules.insert(rule);
-
-            for (unsigned int k = 0; k <= cardinalityRule.bound; k++)
-            {
-                literalIndex = 0;
-                for (Literal literal : cardinalityRule.body)
-                {
-                    Rule rule1;
-                    rule1.head = program.largest + literalIndex * columns + k + 1;         // ctr(i, k+1)
-                    rule1.body.insert(program.largest + (literalIndex + 1) * columns + k); // ctr(i+1, k)
-                    rule1.body.insert(literal);                                            // a
-                    program.rules.insert(rule1);
-
-                    Rule rule2;
-                    rule2.head = program.largest + literalIndex * columns + k;             // ctr(i,k)
-                    rule2.body.insert(program.largest + (literalIndex + 1) * columns + k); // ctr(i+1, k)
-                    program.rules.insert(rule2);
-
-                    literalIndex++;
-                }
-            }
-
-            Rule rule3;
-            rule3.head = program.largest + cardinalityRule.body.size() * columns;
-            program.rules.insert(rule3);
-
-            program.largest += rows * columns - 2;
         }
 
         // Section 2: Atoms' descriptions mapping.
@@ -217,34 +114,36 @@ namespace maxmodels
                 {
                     break;
                 }
-                throw std::runtime_error("The B+ section is prohibited.");
+                std::istringstream ss(line);
+                ss >> atom;
+                program.founded.insert(atom);
             }
         }
 
         // Section 3: B-.
         if (std::getline(input, line) && (line == "B-" || line == "B-\r"))
         {
-            Atoms shouldBeExcluded;
             while (std::getline(input, line))
             {
                 if (line == "0" || line == "0\r")
                 {
                     break;
                 }
-                shouldBeExcluded.insert(stoi(line));
-            }
-            if (shouldBeExcluded.size() > 1 || shouldBeExcluded.contains(1) == false)
-            {
-                throw std::runtime_error("The B- section is prohibited.");
+                std::istringstream ss(line);
+                ss >> atom;
+                if (atom != CONSTRAINT_HEAD)
+                {
+                    program.unfounded.insert(atom);
+                }
             }
         }
 
         // The number of models to be returned.
-        std::getline(input, line);
+        /*std::getline(input, line);
         if (stoi(line) != 1)
         {
             throw std::runtime_error("Only one model can be returned.");
-        }
+        }*/
 
         return program;
     }

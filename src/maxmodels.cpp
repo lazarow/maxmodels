@@ -34,6 +34,11 @@ int main(int argc, char *argv[])
             cout << "% Labels:" << endl;
             cout << as_string(program.mapping) << endl;
         }
+        if (configuration.printWeights)
+        {
+            cout << "% Weights:" << endl;
+            cout << as_string(program.weights) << endl;
+        }
 
         cout << "% Simplifying ..." << endl;
         SimplifiedProgram simplifiedProgram = simplify(program);
@@ -65,9 +70,11 @@ int main(int argc, char *argv[])
         }
 
         cout << "% Solving ..." << endl;
+        bool useOpenWBO = true;
         if (program.weights.size() > 0)
         {
             cout << "% There is the optimization rule. WMaxCDCL will be used ..." << endl;
+            useOpenWBO = false;
         }
         else
         {
@@ -75,14 +82,13 @@ int main(int argc, char *argv[])
         }
         unsigned int iteration = 0;
         unsigned int openWBOTimeLimitInSeconds = 1;
-        bool isOptimization = program.weights.size() > 0;
         while (true)
         {
             iteration++;
             cout << "% Iteration " << iteration << endl;
 
             std::string solverCommand;
-            if (isOptimization)
+            if (useOpenWBO == false)
             {
                 solverCommand = configuration.wMaxCDCLPath;
             }
@@ -99,7 +105,7 @@ int main(int argc, char *argv[])
             if (solvingResult.isTimeout)
             {
                 openWBOTimeLimitInSeconds *= 2;
-                cout << "% Current timeout for OpenWBO:" << openWBOTimeLimitInSeconds << " s." << endl;
+                cout << "% Current timeout for OpenWBO: " << openWBOTimeLimitInSeconds << " s." << endl;
                 continue;
             }
 
@@ -122,7 +128,7 @@ int main(int argc, char *argv[])
             {
                 cout << "ANSWER" << endl;
                 cout << as_string(answerSetCandidate, program.mapping) << endl;
-                if (isOptimization)
+                if (program.weights.size() > 0)
                 {
                     Atom atom;
                     int cost = 0, totalWeight = 0;
@@ -146,7 +152,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                if (isOptimization)
+                if (program.weights.size() > 0)
                 {
                     Atom atom;
                     int cost = 0, totalWeight = 0;

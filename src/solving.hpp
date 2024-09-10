@@ -57,7 +57,7 @@ namespace maxmodels
             std::cout << output;
         }
 
-        bool isTimeout = output.find("s Segmentation fault") != std::string::npos;
+        bool isTimeout = output.find("Segmentation fault") != std::string::npos;
         isTimeout = isTimeout || output.find("segmentation fault") != std::string::npos;
         isTimeout = isTimeout || output.find("Segmentation Fault") != std::string::npos;
         isTimeout = isTimeout || output.find("TIMEOUT") != std::string::npos;

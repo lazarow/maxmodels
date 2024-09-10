@@ -127,6 +127,30 @@ namespace maxmodels
             }
         }
 
+        // Step 4: Additional clauses the founded set.
+        if (program.founded.size() > 0)
+        {
+            for (auto const &atom : program.founded)
+            {
+                if (encodedProgram.atomsToVariablesMapping.contains(atom))
+                {
+                    out << "h " << encodedProgram.atomsToVariablesMapping.at(atom) << " 0" << std::endl;
+                }
+            }
+        }
+
+        // Step 5: Additional clauses the unfounded set.
+        if (program.unfounded.size() > 0)
+        {
+            for (auto const &atom : program.unfounded)
+            {
+                if (encodedProgram.atomsToVariablesMapping.contains(atom))
+                {
+                    out << "h -" << encodedProgram.atomsToVariablesMapping.at(atom) << " 0" << std::endl;
+                }
+            }
+        }
+
         encodedProgram.wcnf = out.str();
 
         return encodedProgram;
