@@ -23,7 +23,7 @@ namespace maxmodels
      * 1 -r1 0
      *
      */
-    EncodedProgram encode(const LogicProgram &program, const SimplifiedProgram &simplifiedProgram)
+    EncodedProgram encode(const LogicProgram &program, const SimplifiedProgram &simplifiedProgram, bool useAugmenting = true)
     {
         // Auxilary variables.
         unsigned int variable = 1;
@@ -113,14 +113,14 @@ namespace maxmodels
         // Step 3: Additional clauses for weights (optimization).
         if (program.weights.size() > 0)
         {
-            unsigned int augment = std::pow(10, std::ceil(std::log10(nofRulesWithBody)));
+            unsigned int augmenting = useAugmenting ? std::pow(10, std::ceil(std::log10(nofRulesWithBody))) : 1;
             for (auto const &[literal, weight] : program.weights)
             {
                 atom = literal < 0 ? -literal : literal;
                 // Add a weight if only there is an atom in clauses.
                 if (encodedProgram.atomsToVariablesMapping.contains(atom))
                 {
-                    out << (augment * weight) << " ";
+                    out << (augmenting * weight) << " ";
                     out << (literal < 0 ? "" : "-") << encodedProgram.atomsToVariablesMapping.at(atom);
                     out << " 0" << std::endl;
                 }

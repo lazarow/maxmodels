@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         cout << "% Simplification ratio: " << simplifiedProgram.simplificationRatio << endl;
 
         cout << "% Encoding the program into MaxSAT clauses ..." << endl;
-        EncodedProgram encoding = encode(program, simplifiedProgram);
+        EncodedProgram encoding = encode(program, simplifiedProgram, configuration.forceOpenWBO == false);
         if (configuration.printClauses)
         {
             cout << "% wcnf:" << endl;
@@ -71,14 +71,15 @@ int main(int argc, char *argv[])
 
         cout << "% Solving ..." << endl;
         bool useOpenWBO = true;
-        if (program.weights.size() > 0)
+        bool isOptimization = program.weights.size() > 0;
+        if (isOptimization == false && configuration.forceOpenWBO)
         {
-            cout << "% There is the optimization rule. WMaxCDCL will be used ..." << endl;
-            useOpenWBO = false;
+            cout << "% There is not an optimization rule. Open-WBO will be used ..." << endl;
         }
         else
         {
-            cout << "% There is not an optimization rule. Open-WBO will be used ..." << endl;
+            cout << "% There is the optimization rule. WMaxCDCL will be used ..." << endl;
+            useOpenWBO = false;
         }
         unsigned int iteration = 0;
         unsigned int openWBOTimeLimitInSeconds = 1;
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
             {
                 cout << "ANSWER" << endl;
                 cout << as_string(answerSetCandidate, program.mapping) << endl;
-                if (program.weights.size() > 0)
+                if (isOptimization)
                 {
                     Atom atom;
                     int cost = 0, totalWeight = 0;
@@ -152,7 +153,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                if (program.weights.size() > 0)
+                if (isOptimization)
                 {
                     Atom atom;
                     int cost = 0, totalWeight = 0;

@@ -17,6 +17,7 @@ namespace maxmodels
         bool printWeights = false;
         bool printClauses = false;
         bool printSolverOutput = false;
+        bool forceOpenWBO = false;
         std::string openWBOPath;
         std::string wMaxCDCLPath;
         unsigned int solverIterationLimit = 1000000;
@@ -36,6 +37,7 @@ namespace maxmodels
         p.add("-w", "--print-weights", "Print the weights.", ap::mode::BOOLEAN);
         p.add("-c", "--print-wcnf", "Print the program in the WCNF format.", ap::mode::BOOLEAN);
         p.add("-o", "--print-solver-output", "Print the solver's output.", ap::mode::BOOLEAN);
+        p.add("-f", "--force-open-wbo", "Use Open-WBO even if the weights are provided.", ap::mode::BOOLEAN);
 
         auto args = p.parse();
         if (!args.parsed_successfully())
@@ -50,6 +52,7 @@ namespace maxmodels
         configuration.printWeights = (bool)stoi(args["-w"]);
         configuration.printClauses = (bool)stoi(args["-c"]);
         configuration.printSolverOutput = (bool)stoi(args["-o"]);
+        configuration.forceOpenWBO = (bool)stoi(args["-f"]);
 
         std::string dotEnvFilePath = args["-e"];
         if (std::filesystem::exists(dotEnvFilePath) == false)
