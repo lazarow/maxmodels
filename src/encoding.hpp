@@ -85,8 +85,13 @@ namespace maxmodels
             {
                 bodies[rule.head].insert(variable);
                 out << "h " << rule.head << " -" << variable << " 0" << std::endl;
-                out << "1 -" << variable << " 0" << std::endl;
-                nofRulesWithBody++;
+                if (
+                    encodedProgram.variablesToAtomsMapping.contains(rule.head) && program.mapping.contains(encodedProgram.variablesToAtomsMapping.at(rule.head)))
+                {
+                    out << "1 -" << variable << " 0" << std::endl;
+                    nofRulesWithBody++;
+                }
+
                 for (const Literal &literal : rule.body)
                 {
                     out << "h -" << variable << " " << literal << " 0" << std::endl;
@@ -127,19 +132,7 @@ namespace maxmodels
             }
         }
 
-        // Step 4: Additional clauses the founded set.
-        if (program.founded.size() > 0)
-        {
-            for (auto const &atom : program.founded)
-            {
-                if (encodedProgram.atomsToVariablesMapping.contains(atom))
-                {
-                    out << "h " << encodedProgram.atomsToVariablesMapping.at(atom) << " 0" << std::endl;
-                }
-            }
-        }
-
-        // Step 5: Additional clauses the unfounded set.
+        // Step 4: Additional clauses the unfounded set.
         if (program.unfounded.size() > 0)
         {
             for (auto const &atom : program.unfounded)

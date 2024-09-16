@@ -28,6 +28,10 @@ namespace maxmodels
                 simplifiedProgram.facts.insert(rule.head);
             }
         }
+        for (Atom atom : program.founded)
+        {
+            simplifiedProgram.facts.insert(atom);
+        }
 
         // Step 2: Initialize the simplified program with the input program's rules.
         simplifiedProgram.rules.clear();

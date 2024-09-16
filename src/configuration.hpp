@@ -17,8 +17,7 @@ namespace maxmodels
         bool printWeights = false;
         bool printClauses = false;
         bool printSolverOutput = false;
-        bool forceOpenWBO = false;
-        std::string openWBOPath;
+        bool notUseAugmenting = false;
         std::string wMaxCDCLPath;
         unsigned int solverIterationLimit = 1000000;
     };
@@ -28,7 +27,7 @@ namespace maxmodels
         Configuration configuration;
 
         ap::parser p(argc, argv);
-        p.add("-e", "--env", "Configuration as a .env file.", ap::mode::REQUIRED);
+        p.add("-e", "--env", "An environment configuration as a .env file.", ap::mode::REQUIRED);
         p.add("-d", "--debug", "Do not perform searching.", ap::mode::BOOLEAN);
         p.add("-m", "--use-mapping", "Map the printed data.", ap::mode::BOOLEAN);
         p.add("-r", "--print-rules", "Print the rules.", ap::mode::BOOLEAN);
@@ -37,7 +36,7 @@ namespace maxmodels
         p.add("-w", "--print-weights", "Print the weights.", ap::mode::BOOLEAN);
         p.add("-c", "--print-wcnf", "Print the program in the WCNF format.", ap::mode::BOOLEAN);
         p.add("-o", "--print-solver-output", "Print the solver's output.", ap::mode::BOOLEAN);
-        p.add("-f", "--force-open-wbo", "Use Open-WBO even if the weights are provided.", ap::mode::BOOLEAN);
+        p.add("-n", "--not-augmenting", "Do not use augmenting.", ap::mode::BOOLEAN);
 
         auto args = p.parse();
         if (!args.parsed_successfully())
@@ -52,7 +51,7 @@ namespace maxmodels
         configuration.printWeights = (bool)stoi(args["-w"]);
         configuration.printClauses = (bool)stoi(args["-c"]);
         configuration.printSolverOutput = (bool)stoi(args["-o"]);
-        configuration.forceOpenWBO = (bool)stoi(args["-f"]);
+        configuration.notUseAugmenting = (bool)stoi(args["-n"]);
 
         std::string dotEnvFilePath = args["-e"];
         if (std::filesystem::exists(dotEnvFilePath) == false)
@@ -61,13 +60,6 @@ namespace maxmodels
         }
 
         dotenv::init(dotEnvFilePath.c_str());
-
-        const char *openWBOPath = getenv("OPENWBO");
-        if (openWBOPath == nullptr || std::string(openWBOPath).empty())
-        {
-            throw std::runtime_error("Open-WBO is not set or empty in the environment variables.");
-        }
-        configuration.openWBOPath = openWBOPath;
 
         const char *wMaxCDCLPath = getenv("WMAXCDCL");
         if (wMaxCDCLPath == nullptr || std::string(wMaxCDCLPath).empty())

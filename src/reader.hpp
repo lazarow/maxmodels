@@ -56,7 +56,7 @@ namespace maxmodels
                 throw std::runtime_error("The model consist an unsupported rule.");
             }
             Atoms heads;
-            nofHeads = definition.at(position++);
+            nofHeads = 1;
             for (i = 0; i < nofHeads; i++)
             {
                 head = definition.at(position++);

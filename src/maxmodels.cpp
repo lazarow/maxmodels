@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         cout << "% Simplification ratio: " << simplifiedProgram.simplificationRatio << endl;
 
         cout << "% Encoding the program into MaxSAT clauses ..." << endl;
-        EncodedProgram encoding = encode(program, simplifiedProgram, configuration.forceOpenWBO == false);
+        EncodedProgram encoding = encode(program, simplifiedProgram, configuration.notUseAugmenting == false);
         if (configuration.printClauses)
         {
             cout << "% wcnf:" << endl;
@@ -70,45 +70,21 @@ int main(int argc, char *argv[])
         }
 
         cout << "% Solving ..." << endl;
-        bool useOpenWBO = true;
-        bool isOptimization = program.weights.size() > 0;
-        if (isOptimization == false && configuration.forceOpenWBO)
-        {
-            cout << "% There is not an optimization rule. Open-WBO will be used ..." << endl;
-        }
-        else
-        {
-            cout << "% There is the optimization rule. WMaxCDCL will be used ..." << endl;
-            useOpenWBO = false;
-        }
         unsigned int iteration = 0;
-        unsigned int openWBOTimeLimitInSeconds = 1;
+        bool isOptimization = program.weights.size() > 0;
+
         while (true)
         {
             iteration++;
             cout << "% Iteration " << iteration << endl;
 
             std::string solverCommand;
-            if (useOpenWBO == false)
-            {
-                solverCommand = configuration.wMaxCDCLPath;
-            }
-            else
-            {
-                solverCommand = configuration.openWBOPath;
-                solverCommand += " -cpu-lim=" + to_string(openWBOTimeLimitInSeconds);
-            }
+            solverCommand = configuration.wMaxCDCLPath;
+
             SolvingOutcome solvingResult = solve(
                 encoding,
                 solverCommand,
                 configuration.printSolverOutput);
-
-            if (solvingResult.isTimeout)
-            {
-                openWBOTimeLimitInSeconds *= 2;
-                cout << "% Current timeout for OpenWBO: " << openWBOTimeLimitInSeconds << " s." << endl;
-                continue;
-            }
 
             if (solvingResult.isError)
             {
@@ -176,7 +152,7 @@ int main(int argc, char *argv[])
 
             if (iteration > configuration.solverIterationLimit)
             {
-                throw runtime_error("Solver's iteration limit has been reached.");
+                throw runtime_error("% Solver's iteration limit has been reached.");
             }
         }
     }
