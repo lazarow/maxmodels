@@ -27,7 +27,6 @@ namespace maxmodels
         Configuration configuration;
 
         ap::parser p(argc, argv);
-        p.add("-e", "--env", "An environment configuration as a .env file.", ap::mode::REQUIRED);
         p.add("-d", "--debug", "Do not perform searching.", ap::mode::BOOLEAN);
         p.add("-m", "--use-mapping", "Map the printed data.", ap::mode::BOOLEAN);
         p.add("-r", "--print-rules", "Print the rules.", ap::mode::BOOLEAN);
@@ -53,12 +52,11 @@ namespace maxmodels
         configuration.printSolverOutput = (bool)stoi(args["-o"]);
         configuration.notUseAugmenting = (bool)stoi(args["-n"]);
 
-        std::string dotEnvFilePath = args["-e"];
+        std::string dotEnvFilePath = std::filesystem::canonical("/proc/self/exe").parent_path().generic_string() + "/.env";
         if (std::filesystem::exists(dotEnvFilePath) == false)
         {
-            throw std::runtime_error("The path to the configuration does not exist.");
+            throw std::runtime_error("The path to the .env file does not exist. It should be placed in the same folder as the executable.");
         }
-
         dotenv::init(dotEnvFilePath.c_str());
 
         const char *wMaxCDCLPath = getenv("WMAXCDCL");

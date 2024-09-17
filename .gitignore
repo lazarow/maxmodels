@@ -3,5 +3,5 @@ libs/*
 !libs/.gitkeep
 !libs/System2.h
 bin/*
-!bin/.gitkeep
+!bin/.env.default
 .env
