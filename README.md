@@ -32,12 +32,12 @@ we recommend other systems like Clingo and DLV.
 
 -   Run `make install` to download all dependencies.
 -   Run `make build` to compile the solver.
--   Create the `.env` file.
+-   Create the `.env` file in the `bin` folder (take `.env.default` as a template).
 
 ### Executing program
 
 ```
-gringo --output=smodels <input_model> | lp2normal-2.27 | ./bin/maxmodels -e <path to .env file>
+gringo --output=smodels --warn=none <input_model> | lp2normal-2.27 | ./bin/maxmodels
 ```
 
 The output of the solver is (mostly) compatible with [the ASP competition standard](https://www.mat.unical.it/aspcomp2013/files/aspoutput.txt).
