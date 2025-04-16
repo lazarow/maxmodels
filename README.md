@@ -32,7 +32,7 @@ we recommend other systems like Clingo and DLV.
 
 -   Run `make install` to download all dependencies.
 -   Run `make build` to compile the solver.
--   Create the `.env` file in the `bin` folder (take `.env.default` as a template).
+-   Create the `.env` file in the `bin` folder (take `.env.default` as a template). Add the path to the WMaxCDCL executable in `.env`.
 
 ### Executing program
 
